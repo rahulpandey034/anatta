@@ -1,0 +1,201 @@
+<html>
+
+<body>
+<div class="content">
+    <figure id="comptree" class="org-chart cf"></figure>
+</div>
+<link rel="stylesheet" type="text/css" href=anatta.css></link>
+<script>
+function getNestedChildren(arr, parent) {
+    var out = [];
+    for(var i in arr) {
+        if(arr[i].parent == parent) {
+            var children = getNestedChildren(arr, arr[i].id);
+            if(children.length) {
+                arr[i].children = children;
+            }
+            out.push(arr[i]);
+        }
+    }
+    return out;
+}
+var onlyonce = 1;
+function createHtmlDomNodes(formedTreeData) {
+	if(!formedTreeData) return "No data";
+    var lavel = 1;
+    
+	function createNode(formedTreeData, rootNode) {
+        var count = 1;
+        var index = -1;
+        onlyonce = 1;
+        var htmlRootNode = `<ul class="company">
+                                <li id="${rootNode.id}" class="company hasChild" onclick="toggler(event)"><a href="#"><span>${rootNode.title}</span></a></li>
+                            </ul>`;
+		if (lavel === 1) {
+			document.getElementById('comptree').innerHTML += htmlRootNode;
+		}
+		for(var i = 0 ; i < rootNode.children.length; i++) {
+            var eleId = rootNode.id;            
+            if(rootNode.children.length === 1) {
+                var htmlChildNode = `<ul class="subcompanies${lavel} active">
+                                    <li class="subcompany${lavel} active"><a href="#"><span>${rootNode.children[i].title}</span></a></li>
+                                </ul>`;
+                var htmlNodeWithChild = `<ul class="subcompanies${lavel} active">
+                                        <li id="${rootNode.children[i].id}" class="subcompany${lavel} hasChild"  onclick="toggler(event)"><a href="#"><span>${rootNode.children[i].title}</span></a></li>
+                                    </ul>`;
+                
+                if(rootNode.children[i].children) {	
+                    document.getElementById(eleId).innerHTML += htmlNodeWithChild;
+                    var currentNode = rootNode.children[i];
+                }
+                else {
+                    document.getElementById(eleId).innerHTML += htmlChildNode;
+                };
+            } else {                        
+                var mainComp = `<ul id="${rootNode.id}ul"></ul>`;
+                
+                if(count === 1) {
+                    var eleId2 = rootNode.id + 'ul';
+                    document.getElementById(eleId).innerHTML += mainComp;
+                    count++;
+                }                
+                
+                var htmlChildNode = `<li id="${rootNode.children[i].id}"><a href="#"><span>${rootNode.children[i].title}</span></a></li>`;
+                var htmlNodeWithChild = `<li id="${rootNode.children[i].id}" class="hasChild" onclick="toggler(event)"><a href="#"><span>${rootNode.children[i].title}</span></a></li>`;
+                if(rootNode.children[i].children) {
+                    index = i;
+                    document.getElementById(eleId2).innerHTML += htmlNodeWithChild;
+                    var currentNode = rootNode.children[i];
+                }
+                else {
+                    document.getElementById(eleId2).innerHTML += htmlChildNode;
+                };
+                whichClassToadd(rootNode.children.length, eleId2, rootNode.children[i].id, index);
+            }
+            
+        }
+        lavel++;
+		createNode(formedTreeData, currentNode);		
+	}
+	createNode(formedTreeData, formedTreeData[0]);
+}
+
+function whichClassToadd(numOfChildrens, ulId, liId, parentIndex){
+    var totalChildrens = numOfChildrens;
+    
+    switch(totalChildrens) {
+        case 2: {
+            if (document.getElementById(ulId)) {
+                var ifClassAddedToUl = document.getElementById(ulId).classList.contains('subcompanies3');
+                
+                if(!ifClassAddedToUl) {
+                    document.getElementById(ulId).classList.add('subcompanies3');
+                }
+            }
+            
+            var ifClassAddedToLi = document.getElementById(liId).classList.contains('subcompany3');
+            if(!ifClassAddedToLi) {
+                document.getElementById(liId).classList.add('subcompany3');
+            }
+            break;
+        }           
+            
+        case 3: {
+            if (document.getElementById(ulId)) {
+                var ifClassAddedToUl = document.getElementById(ulId).classList.contains('subcompanies4');
+                
+                if(!ifClassAddedToUl) {
+                    document.getElementById(ulId).classList.add('subcompanies4');
+                }
+            }
+            
+            var ifClassAddedToLi = document.getElementById(liId).classList.contains('subcompany4');
+            if(!ifClassAddedToLi) {
+                document.getElementById(liId).classList.add('subcompany4');
+            }
+            break;
+        }
+
+        case 4: {
+            if (document.getElementById(ulId)) {
+                var ifClassAddedToUl = document.getElementById(ulId).classList.contains('subcompanies2');
+                
+                if(!ifClassAddedToUl) {
+                    document.getElementById(ulId).classList.add('subcompanies2');
+                }
+            }
+
+            var ifClassAddedToLi = document.getElementById(liId).classList.contains('subcompany2');
+            if(!ifClassAddedToLi) {
+                if(parentIndex !== -1) {
+                    document.getElementById(ulId).classList.remove('subcompanies2');
+                    switch(parentIndex) {                        
+                        case 0: 
+                            document.getElementById(ulId).classList.add('subcompanies4');
+                            break;
+                        case 1: 
+                            document.getElementById(ulId).classList.add('subcompanies5');
+                            break;
+                        case 2: 
+                            document.getElementById(ulId).classList.add('subcompanies6');
+                            break;
+                        case 3: 
+                            document.getElementById(ulId).classList.add('subcompanies7');
+                            break;
+                    }
+                }
+                
+                document.getElementById(liId).classList.add('subcompany2');
+            }
+            break;
+        }
+
+        case 5: {
+            if (document.getElementById(ulId)) {
+                var ifClassAddedToUl = document.getElementById(ulId).classList.contains('subcompanies5');
+                
+                if(!ifClassAddedToUl) {
+                    document.getElementById(ulId).classList.add('subcompanies5');
+                }
+            }
+
+            var ifClassAddedToLi = document.getElementById(liId).classList.contains('subcompany5');
+            if(!ifClassAddedToLi) {
+                document.getElementById(liId).classList.add('subcompany5');
+            }
+            break;
+        }
+    }
+}
+
+var companyHierarchy = [
+    {id: 1, title: 'Company', parent: 0},
+	{id: 2, title: 'Rentomojo', parent: 1},
+	{id: 3, title: 'Core Management', parent: 2},
+	{id: 4, title: 'Core Management', parent: 2},
+	{id: 5, title: 'Core Management', parent: 2},
+	{id: 6, title: 'KYC', parent: 2},
+	{id: 7, title: 'Finance & Account', parent: 3},
+	{id: 8, title: 'Disabled', parent: 3},
+	// {id: 7, title: 'Finance & Account', parent: 4},
+	// {id: 8, title: 'Disabled', parent: 4},
+	// {id: 7, title: 'Finance & Account', parent: 5},
+	// {id: 8, title: 'Disabled', parent: 5},
+	// {id: 7, title: 'Finance & Account', parent: 6},
+	// {id: 8, title: 'Disabled', parent: 6}
+]
+
+var formedTreeData = getNestedChildren(companyHierarchy, 0);
+createHtmlDomNodes(formedTreeData);
+
+function toggler(event) {
+    event.stopPropagation();
+    if(event.currentTarget.childNodes[1].style.display !== "none" || event.currentTarget.childNodes[1].style.display == "")
+        event.currentTarget.childNodes[1].style.display = "none";
+    else
+        event.currentTarget.childNodes[1].style.display = "inline-block";
+}
+
+</script>
+</body>
+</html>
